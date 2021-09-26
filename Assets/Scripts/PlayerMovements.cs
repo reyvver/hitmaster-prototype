@@ -1,31 +1,94 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
+using System.Collections;
 
 public class PlayerMovements : MonoBehaviour
 {
-    public GameObject Player;
-    public Animator Animator;
+    public GameObject playerGameObject;
+    public List<WayPoint> wayPointsList;
 
-    public List<Transform> WayPoints; 
-    // Start is called before the first frame update
+    private Queue<WayPoint> _wayPoints;
+    private Player _player;
+    private Vector3 _destination;
 
-    private NavMeshAgent playerAgent;
-    void Start()
+    private void Awake()
     {
-        playerAgent = Player.GetComponent<NavMeshAgent>();
-        Animator = Player.GetComponent<Animator>();
-      
+        _wayPoints = new Queue<WayPoint>();
+        _player = new Player(playerGameObject);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
+    {
+        Level.Initialize();
+        Level.Start.AddListener(ResetPlayerAndWayPoints);
+        
+        Level.Start.Invoke();
+    }
+
+    private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Animator.SetBool("isWalking", true);
-            playerAgent.SetDestination(WayPoints[0].position);
+            MovePlayer();
         }
     }
+
+    private void ResetPlayerAndWayPoints()
+    {
+        InitializeWayPointsQueue();
+        
+        WayPoint startPos = _wayPoints.Dequeue();
+        _player.SetGameObjectPosition(startPos.GetVector3());
+    }
+
+    private void InitializeWayPointsQueue()
+    {
+        foreach (var currentWayPoint in wayPointsList)
+        {
+            _wayPoints.Enqueue(currentWayPoint);
+        }
+    }
+
+    private void MovePlayer()
+    {
+        WayPoint nextWayPoint = _wayPoints.Dequeue();
+        _destination = nextWayPoint.GetVector3();
+        
+        _player.MovePlayerToNewPosition(_destination);
+        StartCoroutine(WaitForWayPointReached());
+    }
+
+    private IEnumerator WaitForWayPointReached()
+    {
+        yield return new WaitUntil(WayPointReached);
+        OnWayPoint();
+    } 
+    
+    private bool WayPointReached()
+    {
+        float distance = Vector3.Distance(playerGameObject.transform.position, _destination);
+
+        if (distance <= 0.9f)
+            return true;
+        
+        return false;
+    }
+
+    private void OnWayPoint()
+    {
+        _player.StopPlayer();
+        
+        if (CheckIfFinish())
+            print("finish");
+            //Level.EndOfLevel.Invoke();
+    }
+
+    private bool CheckIfFinish()
+    {
+        if (_wayPoints.Count == 0)
+            return true;
+
+        return false;
+    }
+
 }
