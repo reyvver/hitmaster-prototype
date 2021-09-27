@@ -1,39 +1,42 @@
 ﻿using UnityEngine;
 
-public class EnemyGang : MonoBehaviour
+namespace EnemyControl
 {
-    public EnemySpawnPoint[] spawnPoints;
-    [HideInInspector] public bool isKilled;
-
-    private void Start()
+    public class EnemyGang : MonoBehaviour
     {
-        Level.EnemyIsKilled.AddListener(CheckIfGangIsKilled);
-        Level.Start.AddListener(OnStart);
-    }
+        public EnemySpawnPoint[] spawnPoints;
+        [HideInInspector] public bool isKilled;
 
-    private void OnStart()
-    {
-        isKilled = false;
-    }
-
-    private void CheckIfGangIsKilled()
-    {
-        int activeEnemies = 0;
-
-        if (isKilled) return;
-
-        foreach (var spawnPoint in spawnPoints)
+        private void Start()
         {
-            if (spawnPoint.IsEnemyAlive())
-            {
-                activeEnemies++;
-            }
+            Level.EnemyIsKilled.AddListener(CheckIfGangIsKilled);
+            Level.Start.AddListener(OnStart);
         }
 
-        if (activeEnemies == 0)
+        private void OnStart()
         {
-            Level.GangIsKilled.Invoke();
-            isKilled = true;
+            isKilled = false;
+        }
+
+        private void CheckIfGangIsKilled()
+        {
+            int activeEnemies = 0;
+
+            if (isKilled) return;
+
+            foreach (var spawnPoint in spawnPoints)
+            {
+                if (spawnPoint.IsEnemyAlive())
+                {
+                    activeEnemies++;
+                }
+            }
+
+            if (activeEnemies == 0)
+            {
+                Level.GangIsKilled.Invoke();
+                isKilled = true;
+            }
         }
     }
 }

@@ -10,8 +10,8 @@ namespace BulletControl
         public Camera mainCamera;
         public int startBulletNumber;
         
-        private bool IsSpawnApproved;
-        private List<GameObject> bullets;
+        private bool _isSpawnApproved;
+        private List<GameObject> _bullets;
         
         private void Start()
         {
@@ -24,7 +24,7 @@ namespace BulletControl
 
         private void Update()
         {
-            if (!IsSpawnApproved) return;
+            if (!_isSpawnApproved) return;
 
             if (Input.GetMouseButtonDown(0))
             {
@@ -40,7 +40,7 @@ namespace BulletControl
 
         private void CreateStartPool()
         {
-            bullets = new List<GameObject>();
+            _bullets = new List<GameObject>();
             
             for (int i = 0; i < startBulletNumber; i++)
             {
@@ -48,16 +48,16 @@ namespace BulletControl
                 newBullet.transform.SetParent(bulletsContainer);
                 newBullet.SetActive(false);
                 
-                bullets.Add(newBullet);
+                _bullets.Add(newBullet);
             }
         }
 
         private GameObject GetObjectFromPool()
         {
-            for (int i = 0; i < bullets.Count; i++)
+            for (int i = 0; i < _bullets.Count; i++)
             {
-                if (!bullets[i].activeInHierarchy)
-                    return bullets[i];
+                if (!_bullets[i].activeInHierarchy)
+                    return _bullets[i];
             }
             return null;
         }
@@ -73,12 +73,12 @@ namespace BulletControl
 
         private void SpawnApproved()
         {
-            IsSpawnApproved = true;
+            _isSpawnApproved = true;
         }
         
         private void SpawnDisabled()
         {
-            IsSpawnApproved = false;
+            _isSpawnApproved = false;
         }
 
 

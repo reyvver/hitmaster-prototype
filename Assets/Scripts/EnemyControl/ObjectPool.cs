@@ -34,23 +34,7 @@ namespace EnemyControl
                 newObjectQueue.Enqueue(prefab);
             }
         }
-
-        public void CreatStartQueue(GameObject prefab, Transform parent, int size)
-        {
-            Queue<GameObject> queue = CreateNewQueue(prefab);
-
-            for (int i = 0; i < size; i++)
-            {
-                GameObject newObj = CreateNewObject(prefab);
-                newObj.transform.SetParent(parent);
-                newObj.transform.localPosition = Vector3.zero;
-                newObj.SetActive(false);
-            
-                queue.Enqueue(newObj);
-            }
-        }
-    
-    
+        
         public GameObject GetObject(GameObject prefab)
         {
             if (_objectPool.TryGetValue(prefab.name, out Queue<GameObject> objectQueue))

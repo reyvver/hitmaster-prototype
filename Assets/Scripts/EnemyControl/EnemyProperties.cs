@@ -1,7 +1,4 @@
-﻿
-using UnityEngine;
-
-namespace EnemyControl
+﻿namespace EnemyControl
 {
     public static class EnemyProperties
     {
