@@ -9,12 +9,14 @@ public class PlayerMovements : MonoBehaviour
 
     private Queue<WayPoint> _wayPoints;
     private Player _player;
+    private Transform _playerTransform;
     private Vector3 _destination;
 
     private void Awake()
     {
         _wayPoints = new Queue<WayPoint>();
         _player = new Player(playerGameObject);
+        _playerTransform = playerGameObject.transform;
     }
 
     private void Start()
@@ -38,7 +40,7 @@ public class PlayerMovements : MonoBehaviour
         InitializeWayPointsQueue();
         
         WayPoint startPos = _wayPoints.Dequeue();
-        _player.SetGameObjectPosition(startPos.GetVector3());
+        _player.SetPlayerPosition(startPos.GetVector3());
     }
 
     private void InitializeWayPointsQueue()
@@ -53,7 +55,7 @@ public class PlayerMovements : MonoBehaviour
     {
         WayPoint nextWayPoint = _wayPoints.Dequeue();
         _destination = nextWayPoint.GetVector3();
-        
+
         _player.MovePlayerToNewPosition(_destination);
         StartCoroutine(WaitForWayPointReached());
     }
@@ -66,9 +68,9 @@ public class PlayerMovements : MonoBehaviour
     
     private bool WayPointReached()
     {
-        float distance = Vector3.Distance(playerGameObject.transform.position, _destination);
+        float distance = _playerTransform.position.z - _destination.z;
 
-        if (distance <= 0.9f)
+        if (distance == 0)
             return true;
         
         return false;

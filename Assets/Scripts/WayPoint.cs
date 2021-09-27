@@ -9,7 +9,7 @@ public class WayPoint : MonoBehaviour
         {
             _waypoint = GetComponent<Transform>();
             _visibleRenderer = GetComponent<MeshRenderer>();
-
+        
             HideWayPoint();
         }
 
