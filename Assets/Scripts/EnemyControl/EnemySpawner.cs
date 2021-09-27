@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace EnemyControl
 {
-    public class LevelSetUp : MonoBehaviour
+    public class EnemySpawner : MonoBehaviour
     {
         public GameObject enemyPrefab;
         public List<EnemyGang> enemyGangs;

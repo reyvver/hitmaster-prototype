@@ -43,4 +43,9 @@ public class EnemySpawnPoint : MonoBehaviour
         _enemyController = null;
     }
 
+    public bool IsEnemyAlive()
+    {
+        return _enemyController._isAlive;
+    }
+
 }

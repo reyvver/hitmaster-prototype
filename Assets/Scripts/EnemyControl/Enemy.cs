@@ -12,8 +12,9 @@ public class Enemy : MonoBehaviour
     private NavMeshAgent _enemyAgent;
     private Animator _animator;
 
+
     public float _healthPoints;
-    private bool _isAlive;
+    [HideInInspector] public bool _isAlive;
     
     private void Awake()
     {
@@ -26,6 +27,15 @@ public class Enemy : MonoBehaviour
         _healthPoints = EnemyProperties.StartHealthPoints;
         healthBar.maxValue = _healthPoints;
         healthBar.value = _healthPoints;
+    }
+
+    private void Start()
+    {
+        foreach (var currentRigidBody in allRigidbodies)
+        {
+            currentRigidBody.isKinematic = true;
+        }
+
     }
 
     private void Update()
@@ -48,17 +58,22 @@ public class Enemy : MonoBehaviour
     public void Reset()
     {
         EnableOrDisableEnemy(true);
+        
+        _isAlive = true;
+        _healthPoints = EnemyProperties.StartHealthPoints;
+        healthBar.value = _healthPoints;
     }
 
     private void EnemyIsKilled()
     {
         _isAlive = false;
         ActivateRagdollPhysics();
+
+        Level.EnemyIsKilled.Invoke();
     }
     
     private void ActivateRagdollPhysics()
     {
-        
         foreach (var currentRigidBody in allRigidbodies)
         {
             currentRigidBody.isKinematic = false;
@@ -67,13 +82,25 @@ public class Enemy : MonoBehaviour
         }
         
         EnableOrDisableEnemy(false);
-
     }
+
 
     private void EnableOrDisableEnemy(bool value)
     {
         _animator.enabled = value;
         _enemyAgent.enabled = value;
         healthBar.gameObject.SetActive(value);
+    }
+    
+    
+    private void OnTriggerEnter(Collider other)
+    {
+        GameObject obj = other.gameObject;
+        
+        if (obj.CompareTag("Bullet"))
+        {
+            _healthPoints -= EnemyProperties.BulletDamage;
+            healthBar.value = _healthPoints;
+        }
     }
 }

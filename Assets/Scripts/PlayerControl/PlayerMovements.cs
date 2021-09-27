@@ -18,18 +18,21 @@ namespace PlayerControl
         private GameObject _playerGameObject;
         private Player _player;
         private Transform _playerTransform;
+        private bool _isCurrentGangKilled = true;
 
         private void Awake()
         {
             _wayPoints = new Queue<WayPoint>();
             
             Level.Initialize();
+            
             Level.Start.AddListener(ResetPlayerAndWayPoints);
+            Level.GangIsKilled.AddListener(MovementToNextWayPointApproved);
         }
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetMouseButtonDown(0) && _isCurrentGangKilled)
             {
                 MovePlayer();
             }
@@ -58,6 +61,8 @@ namespace PlayerControl
             
             virtualCamera.Follow = _playerTransform;
             virtualCamera.LookAt = _playerTransform;
+
+            _isCurrentGangKilled = true;
             
             WayPoint startPos = _wayPoints.Dequeue();
             _player.SetPlayerPosition(startPos.GetVector3());
@@ -76,6 +81,9 @@ namespace PlayerControl
         {
             WayPoint nextWayPoint = _wayPoints.Dequeue();
             _destination = nextWayPoint.GetVector3();
+
+            _isCurrentGangKilled = false;
+            Level.PlayerOffThePosition.Invoke();
 
             _player.MovePlayerToNewPosition(_destination);
             StartCoroutine(WaitForWayPointReached());
@@ -100,6 +108,8 @@ namespace PlayerControl
         private void OnWayPoint()
         {
             _player.StopPlayer();
+            _isCurrentGangKilled = false;
+            Level.PlayerOnThePosition.Invoke();
 
             if (CheckIfFinish())
             { 
@@ -115,6 +125,11 @@ namespace PlayerControl
                 return true;
 
             return false;
+        }
+
+        private void MovementToNextWayPointApproved()
+        {
+            _isCurrentGangKilled = true;
         }
 
     }
