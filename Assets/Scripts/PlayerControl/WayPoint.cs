@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 
-public class WayPoint : MonoBehaviour
+namespace PlayerControl
+{
+    public class WayPoint : MonoBehaviour
     {
         private Transform _waypoint;
         private MeshRenderer _visibleRenderer;
@@ -9,7 +11,6 @@ public class WayPoint : MonoBehaviour
         {
             _waypoint = GetComponent<Transform>();
             _visibleRenderer = GetComponent<MeshRenderer>();
-        
             HideWayPoint();
         }
 
@@ -22,4 +23,6 @@ public class WayPoint : MonoBehaviour
         {
             return _waypoint.position;
         }
+        
     }
+}
